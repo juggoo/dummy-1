@@ -74,11 +74,11 @@ jobs:
             ${EC2_USERNAME}@${EC2_HOST} << 'EOF'
             
             # Navigate to app directory
-            cd /var/www/express-app
+            cd /var/www/dummy-1
 
             # Fix ownership first (important!)
             echo "Fixing directory ownership..."
-            sudo chown -R $USER:$USER /var/www/express-app
+            sudo chown -R $USER:$USER /var/www/dummy-1
             
             
             # Backup current version
@@ -92,11 +92,11 @@ jobs:
             
             # Extract new version (this will overwrite existing files)
             echo "Extracting new deployment package..."
-            tar --overwrite -xzf /tmp/deploy.tar.gz -C /var/www/express-app
+            tar --overwrite -xzf /tmp/deploy.tar.gz -C /var/www/dummy-1
             rm /tmp/deploy.tar.gz
 
             # Fix ownership after extraction
-            sudo chown -R $USER:$USER /var/www/express-app
+            sudo chown -R $USER:$USER /var/www/dummy-1
             
             
             # Install production dependencies on the server
@@ -115,7 +115,7 @@ jobs:
             mkdir -p logs
             
             # Zero-downtime reload with PM2
-            if pm2 describe express-app > /dev/null 2>&1; then
+            if pm2 describe dummy-1 > /dev/null 2>&1; then
               echo "Reloading PM2 app (zero-downtime)..."
               sudo pm2 reload ecosystem.config.cjs --update-env
             else
@@ -171,17 +171,17 @@ jobs:
           ssh -i private_key.pem -o StrictHostKeyChecking=no \
             ${EC2_USERNAME}@${EC2_HOST} << 'EOF'
             
-            cd /var/www/express-app
+            cd /var/www/dummy-1
 
             # Fix ownership first (important!)
-            sudo chown -R $USER:$USER /var/www/express-app
+            sudo chown -R $USER:$USER /var/www/dummy-1
             
             # Find latest backup
             latest_backup=$(ls -t backups/backup_*.tar.gz 2>/dev/null | head -1)
             
             if [ -n "$latest_backup" ]; then
               echo "Found backup: $latest_backup"
-              tar -xzf "$latest_backup" -C /var/www/express-app
+              tar -xzf "$latest_backup" -C /var/www/dummy-1
               npm ci
               pm2 reload ecosystem.config.cjs
               echo "✅ Rolled back to previous version"
