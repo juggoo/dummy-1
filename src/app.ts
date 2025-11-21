@@ -8,8 +8,8 @@ const PORT = process.env.PORT || 7000;
 const dummyUsers = [
   {
     id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
+    name: "Yovan Juggoo",
+    email: "yovan.juggoo@example.com",
     age: 28,
     role: "developer",
   },
